@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
     public Rigidbody rb;
     public float movementSpeed;
     public float jumpForce;
+    public Camera camera;
     #endregion
 
     #region Private Fields
@@ -18,6 +19,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         isGrounded = false;
     }
 
@@ -58,8 +60,13 @@ public class Player : MonoBehaviour
 
     private void Move()
     {
-        Vector3 playerInput = this.transform.rotation * new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        this.rb.MovePosition(this.transform.position + playerInput * Time.deltaTime * this.movementSpeed);
+        Vector3 playerInput = this.camera.transform.rotation * new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
+        this.transform.Translate(playerInput * Time.deltaTime * this.movementSpeed, Space.World);
+
+        if (playerInput.x != 0 && playerInput.y != 0)
+        {
+            this.transform.rotation = Quaternion.LookRotation(playerInput);
+        }
     }
 
     private void Jump()
